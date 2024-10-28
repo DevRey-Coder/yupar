@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Customers</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+  <style>
+  #destinationForm {
+    display: flex;
+    flex-direction: column;
+   }
+
+   #destinationForm label {
+    margin: 10px 0 5px;
+   }
+
+   #destinationForm input, textarea {
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+   }
+
+   button {
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+   }
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+li .actions button {
+    margin-left: 5px;
+    padding: 5px 10px;
+    border: none;
+    color: white;
+    cursor: pointer;
+} */
+
+#sampleTable {
+    width: 100%;
+    margin-top: 1.5rem;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+#sampleTable th, #sampleTable td {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#sampleTable th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+#sampleTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.action-button {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    margin: 0 0.25rem;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    border: none;
+}
+
+.update-button {
+    background-color: #4a90e2;
+}
+
+.delete-button {
+    background-color: #e04a4a;
+}
+
+li .actions .edit-btn {
+    background-color: #28a745;
+}
+
+li .actions .delete-btn {
+    background-color: #dc3545;
+}
+  </style>
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center">
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <span class="d-none d-lg-block">Travel</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <div class="search-bar">
+      <form class="search-form d-flex align-items-center" method="POST" action="#">
+        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+      </form>
+    </div><!-- End Search Bar -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li><!-- End Search Icon-->
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>Kevin Anderson</h6>
+              <span>Web Designer</span>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-gear"></i>
+                <span>Account Settings</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                <i class="bi bi-question-circle"></i>
+                <span>Need Help?</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="#">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="dashboard.html">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span>Booking</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="booking.html">
+              <i class="bi bi-circle"></i><span>Booking List</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Forms Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link " data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-layout-text-window-reverse"></i><span>Destination</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="tables-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+       <!--    <li>
+            <a href="tables-general.html">
+              <i class="bi bi-circle"></i><span>General Tables</span>
+            </a>
+          </li> -->
+          <li>
+            <a href="destination.html" class="active">
+              <i class="bi bi-circle"></i><span>Destination List</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Tables Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-bar-chart"></i><span>Packages</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="package.html">
+              <i class="bi bi-circle"></i><span>Package Lists</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Charts Nav -->
+
+      <li class="nav-heading">Pages</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="users-profile.html">
+          <i class="bi bi-person"></i>
+          <span>Profile</span>
+        </a>
+      </li><!-- End Profile Page Nav -->
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="pages-register.html">
+          <i class="bi bi-card-list"></i>
+          <span>Register</span>
+        </a>
+      </li><!-- End Register Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="pages-login.html">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>Login</span>
+        </a>
+      </li><!-- End Login Page Nav -->
+
+    </ul>
+
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Data Tables</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="dashboard.html">Home</a></li>
+          <li class="breadcrumb-item active">Destination</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Destination List</h5>
+
+              <form action="#" id="destinationForm" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="destinationId" />
+
+                <label for="city">City</label>
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  placeholder="Enter City"
+                />
+            
+                <label for="country">Country</label>
+                <input
+                  type="text"
+                  id="country"
+                  name="country"
+                  placeholder="Enter Country"
+                  required
+                />
+
+                <label for="image">Image URL</label>
+                  <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    placeholder="Enter Image URL"
+                    required
+                  />
+            
+                <label for="description">Description</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Enter Destination Description"
+                ></textarea>
+            
+                <label for="starRating">Star Rating</label>
+                <input
+                  type="number"
+                  id="starRating"
+                  name="starRating"
+                  placeholder="Enter Star Rating"
+                  required
+                  min="1"
+                  max="5"
+                />
+            
+                <div class="actions">
+                    <button type="submit">Save Destination</button>
+                    <button type="button" id="cancelBtn" onclick="resetForm()">Cancel</button>
+                </div>
+            </form>
+            
+            <!-- List of destinations -->
+            <div id="destinationListContainer">
+                <ul id="destinationList"></ul>
+            
+                <!-- Sample table for testing data -->
+                <table id="sampleTable">
+                    <thead>
+                        <tr>
+                          <th>No</th>
+                          <th>City</th>
+                          <th>Country</th>
+                          <th>Description</th>
+                          <th>Star Rating</th>
+                          <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic rows will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+            
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>Audery</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+
+      Designed by <a href="">Audery</a>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="assets/vendor/echarts/echarts.min.js"></script>
+  <script src="assets/vendor/quill/quill.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/customer.js"></script>
+
+</body>
+
+</html>

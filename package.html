@@ -319,7 +319,7 @@
             data-bs-toggle="collapse"
             href="#"
           >
-            <i class="bi bi-layout-text-window-reverse"></i><span>Customer</span
+            <i class="bi bi-layout-text-window-reverse"></i><span>Destination</span
             ><i class="bi bi-chevron-down ms-auto"></i>
           </a>
           <ul
@@ -328,8 +328,8 @@
             data-bs-parent="#sidebar-nav"
           >
             <li>
-              <a href="./customer.html">
-                <i class="bi bi-circle"></i><span>Customer List</span>
+              <a href="./destination.html">
+                <i class="bi bi-circle"></i><span>Destination List</span>
               </a>
             </li>
           </ul>
@@ -403,145 +403,160 @@
 
       <section class="section">
         <div class="row">
-          <form action="#" id="packageForm" method="post">
-            <input type="hidden" id="packageId" />
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Packages</h5>
 
-            <label for="title">Title</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              placeholder="Enter Package Title"
-              required
-            />
+                <form id="packageForm" method="post" enctype="multipart/form-data">
+                  <input type="hidden" id="packageId" />
 
-            <label for="image">Image URL</label>
-            <input
-              type="file"
-              id="image"
-              name="image"
-              placeholder="Enter Image URL"
-              required
-            />
+                  <label for="title">Title</label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Enter Package Title"
+                    required
+                  />
 
-            <label for="description" style="margin-top: 14px"
-              >Description</label
-            >
-            <textarea
-              id="description"
-              name="description"
-              placeholder="Enter Package Description"
-            ></textarea>
+                  <label for="image">Image URL</label>
+                  <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    placeholder="Enter Image URL"
+                    required
+                  />
 
-            <label for="population">Population</label>
-            <input
-              type="number"
-              id="population"
-              name="population"
-              placeholder="Enter Population"
-              required
-            />
+                  <label for="description" style="margin-top: 14px"
+                    >Description</label
+                  >
+                  <textarea
+                    id="description"
+                    name="description"
+                    placeholder="Enter Package Description"
+                  ></textarea>
 
-            <div
-              class=""
-              style="display: flex; justify-content: space-between; padding: 0"
-            >
-              <div class="" style="width: 45%;">
-                <label for="pax">Pax</label>
-                <input
-                  type="number"
-                  id="pax"
-                  name="pax"
-                  placeholder="Enter Pax"
-                  required
-                />
-              </div>
+                  <label for="population">Population</label>
+                  <input
+                    type="number"
+                    id="population"
+                    name="population"
+                    placeholder="Enter Population"
+                    required
+                  />
 
-              <div class=""  style="width: 45%;">
-                <label for="duration">Duration</label>
-                <input
-                  type="text"
-                  id="duration"
-                  name="duration"
-                  placeholder="Enter Duration"
-                  style="width: 100%"
-                  required
-                />
+                  <div
+                    class=""
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      padding: 0;
+                    "
+                  >
+                    <div class="" style="width: 45%">
+                      <label for="pax">Pax</label>
+                      <input
+                        type="number"
+                        id="pax"
+                        name="pax"
+                        placeholder="Enter Pax"
+                        required
+                      />
+                    </div>
+
+                    <div class="" style="width: 45%">
+                      <label for="duration">Duration</label>
+                      <input
+                        type="text"
+                        id="duration"
+                        name="duration"
+                        placeholder="Enter Duration"
+                        style="width: 100%"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <label for="location">Location</label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    placeholder="Enter Location"
+                    required
+                  />
+
+                  <label for="review">Review</label>
+                  <input
+                    type="number"
+                    id="review"
+                    name="review"
+                    placeholder="Enter Review Count"
+                    required
+                  />
+
+                  <div
+                    class=""
+                    style="display: flex; justify-content: space-between"
+                  >
+                    <div class="" style="width: 45%">
+                      <label for="starRating">Star Rating</label>
+                      <input
+                        type="number"
+                        id="starRating"
+                        name="starRating"
+                        placeholder="Enter Star Rating"
+                        required
+                        min="1"
+                        max="5"
+                      />
+                    </div>
+
+                    <div class="" style="width: 45%">
+                      <label for="price">Price</label>
+                      <input
+                        type="number"
+                        id="price"
+                        name="price"
+                        placeholder="Enter Price"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div class="actions">
+                    <button type="submit">Save Package</button>
+                    <button type="button" id="cancelBtn" onclick="resetForm()">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+
+                <!-- List of packages -->
+                <div id="packageListContainer">
+                  <ul id="packageList"></ul>
+
+                  <table id="packageTable">
+                    <thead>
+                      <tr>
+                        <th>No</th>
+                        <th>Title</th>
+                        <th>Population</th>
+                        <th>Location</th>
+                        <th>Star Rating</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Dynamic rows will be injected here -->
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-
-            <label for="location">Location</label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              placeholder="Enter Location"
-              required
-            />
-
-            <label for="review">Review</label>
-            <input
-              type="number"
-              id="review"
-              name="review"
-              placeholder="Enter Review Count"
-              required
-            />
-
-           <div class="" style="display: flex; justify-content: space-between;">
-            <div class="" style="width: 45%;">
-              <label for="starRating">Star Rating</label>
-              <input
-                type="number"
-                id="starRating"
-                name="starRating"
-                placeholder="Enter Star Rating"
-                required
-                min="1"
-                max="5"
-              />
-             </div>
-  
-              <div class="" style="width: 45%;">
-                <label for="price">Price</label>
-              <input
-                type="number"
-                id="price"
-                name="price"
-                placeholder="Enter Price"
-                required
-              />
-              </div>
-           </div>
-
-            <div class="actions">
-              <button type="submit">Save Package</button>
-              <button type="button" id="cancelBtn" onclick="resetForm()">
-                Cancel
-              </button>
-            </div>
-          </form>
-
-          <!-- List of packages -->
-          <div id="packageListContainer">
-            <ul id="packageList"></ul>
-
-            <table id="packageTable">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Title</th>
-                  <th>Population</th>
-                  <th>Location</th>
-                  <th>Star Rating</th>
-                  <th>Price</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Dynamic rows will be injected here -->
-              </tbody>
-            </table>
           </div>
         </div>
       </section>
@@ -575,6 +590,6 @@
     <script src="assets/vendor/php-email-form/validate.js"></script>
 
     <!-- Template Main JS File -->
-    <script src="assets/js/main.js"></script>
+    <script src="assets/js/package.js"></script>
   </body>
 </html>

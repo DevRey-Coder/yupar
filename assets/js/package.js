@@ -21,23 +21,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (packages.length === 0) {
             const row = document.createElement("tr");
-            row.innerHTML = `
-                <td colspan="7" style="text-align: center;">No packages available</td>
-            `;
+            row.innerHTML = `<td colspan="7" style="text-align: center;">No packages available</td>`;
             packageTable.appendChild(row);
             return;
         }
 
         packages.forEach((pkg, index) => {
             const row = document.createElement("tr");
-
             row.innerHTML = `
                 <td>${index + 1}</td>
-                <td>${pkg.title}</td>
-                <td>${pkg.population}</td>
-                <td>${pkg.location}</td>
-                <td>${pkg.starRating}</td>
-                <td>${pkg.price}</td>
+                <td>${pkg.title || ''}</td>
+                <td>${pkg.population || ''}</td>
+                <td>${pkg.location || ''}</td>
+                <td>${pkg.starRating || ''}</td>
+                <td>${pkg.pax * pkg.price || ''}</td>
                 <td>
                     <button class="action-button update-button" onclick="editPackage(${index})">Update</button>
                     <button class="action-button delete-button" onclick="deletePackage(${index})">Delete</button>
@@ -51,51 +48,47 @@ document.addEventListener("DOMContentLoaded", function () {
     packageForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
+        const formData = new FormData(packageForm); // Use FormData to handle file input
         const packageData = {
-            title: document.getElementById("title").value,
-            image: document.getElementById("image").value,
-            description: document.getElementById("description").value,
-            population: parseInt(document.getElementById("population").value),
-            pax: parseInt(document.getElementById("pax").value),
-            duration: document.getElementById("duration").value,
-            location: document.getElementById("location").value,
-            review: parseInt(document.getElementById("review").value),
-            starRating: parseInt(document.getElementById("starRating").value),
-            price: parseInt(document.getElementById("price").value)
+            title: formData.get("title"),
+            description: formData.get("description"),
+            population: parseInt(formData.get("population")),
+            pax: parseInt(formData.get("pax")),
+            duration: formData.get("duration"),
+            location: formData.get("location"),
+            review: parseInt(formData.get("review")),
+            starRating: parseInt(formData.get("starRating")),
+            price: parseInt(formData.get("price"))
         };
 
-        if (editingIndex === -1) {
-            // Add a new package via the API
-            try {
-                const response = await fetch("http://localhost:3000/package", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(packageData)
-                });
-                const newPackage = await response.json();
-                packages.push(newPackage);
-            } catch (error) {
-                console.error("Error adding package:", error);
-            }
-        } else {
-            // Update an existing package via the API
-            const packageId = packages[editingIndex].id;
-            try {
-                const response = await fetch(`http://localhost:3000/package/${packageId}`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(packageData)
-                });
-                packages[editingIndex] = await response.json();
-                editingIndex = -1;
-            } catch (error) {
-                console.error("Error updating package:", error);
-            }
+        // Handling image file if present
+        if (formData.get("image").size > 0) {
+            packageData.image = formData.get("image"); // Directly add file to FormData
         }
 
-        // Reset form and re-render table
-        packageForm.reset();
-        renderTable();
+        // Condition to add or update package
+        const url = editingIndex === -1 ? "http://localhost:3000/package" : `http://localhost:3000/package/${packages[editingIndex].id}`;
+        const method = editingIndex === -1 ? "POST" : "PATCH";
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                body: formData, // Directly send FormData
+            });
+            const result = await response.json();
+
+            if (editingIndex === -1) {
+                packages.push(result);
+            } else {
+                packages[editingIndex] = result;
+                editingIndex = -1;
+            }
+
+            packageForm.reset();
+            renderTable();
+        } catch (error) {
+            console.error("Error submitting package:", error);
+        }
     });
 
     // Edit package
@@ -103,7 +96,6 @@ document.addEventListener("DOMContentLoaded", function () {
         editingIndex = index;
         const pkg = packages[index];
         document.getElementById("title").value = pkg.title;
-        document.getElementById("image").value = pkg.image;
         document.getElementById("description").value = pkg.description || "";
         document.getElementById("population").value = pkg.population;
         document.getElementById("pax").value = pkg.pax;

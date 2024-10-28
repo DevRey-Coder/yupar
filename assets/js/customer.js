@@ -20,22 +20,19 @@ document.addEventListener("DOMContentLoaded", function () {
         destinationTable.innerHTML = "";
 
         if (destinations.length === 0) {
-            // Display message when there are no bookings
             const row = document.createElement("tr");
-            row.innerHTML = `
-                <td colspan="7" style="text-align: center;">No destinations available</td>
-            `;
+            row.innerHTML = `<td colspan="7" style="text-align: center;">No destinations available</td>`;
             destinationTable.appendChild(row);
             return;
         }
 
         destinations.forEach((destination, index) => {
             const row = document.createElement("tr");
-
             row.innerHTML = `
-                <td>${index+1}</td>
+                <td>${index + 1}</td>
+                <td>${destination.city}</td>
                 <td>${destination.country}</td>
-                <td>${destination.description || "N/A"}</td>
+                <td>${destination.description || "Such a beatiful place"}</td>
                 <td>${destination.starRating}</td>
                 <td>
                     <button class="action-button update-button" onclick="editDestination(${index})">Update</button>
@@ -50,17 +47,27 @@ document.addEventListener("DOMContentLoaded", function () {
     destinationForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
+        const city = document.getElementById("city").value;
         const country = document.getElementById("country").value;
         const description = document.getElementById("description").value;
         const starRating = document.getElementById("starRating").value;
+        const imageFile = document.getElementById("image").files[0];
+
+        const formData = new FormData();
+        formData.append("city", city);
+        formData.append("country", country);
+        formData.append("description", description);
+        formData.append("starRating", parseInt(starRating));
+        if (imageFile) {
+            formData.append("image", imageFile);
+        }
 
         if (editingIndex === -1) {
             // Add a new destination via the API
             try {
                 const response = await fetch("http://localhost:3000/destination", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ country, description, starRating: parseInt(starRating) })
+                    body: formData
                 });
                 const newDestination = await response.json();
                 destinations.push(newDestination);
@@ -73,8 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 const response = await fetch(`http://localhost:3000/destination/${destinationId}`, {
                     method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ country, description, starRating: parseInt(starRating) })
+                    body: formData
                 });
                 destinations[editingIndex] = await response.json();
                 editingIndex = -1;
@@ -92,6 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.editDestination = function (index) {
         editingIndex = index;
         const destination = destinations[index];
+        document.getElementById("city").value = destination.city;
         document.getElementById("country").value = destination.country;
         document.getElementById("description").value = destination.description || "";
         document.getElementById("starRating").value = destination.starRating;
