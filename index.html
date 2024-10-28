@@ -9,7 +9,7 @@
     <!-- 
     - favicon
   -->
-    <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="shortcut icon" href="./assets/img/logo-blue.svg" type="image/svg+xml" />
 
     <!-- 
     - custom css link
@@ -25,6 +25,27 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <style>
+      .results-container {
+    margin-top: 20px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 8px;
+  }
+  .result-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  .result-item h4 {
+    margin: 0;
+    color: #333;
+  }
+  .result-item p {
+    margin: 5px 0;
+    color: #555;
+  }
+    </style>
   </head>
 
   <body id="top">
@@ -168,12 +189,9 @@
 
         <section class="tour-search">
           <div class="container">
-            <form action="" class="tour-search-form">
+            <form action="" id="tourSearchForm" class="tour-search-form">
               <div class="input-wrapper">
-                <label for="destination" class="input-label"
-                  >Search Destination*</label
-                >
-
+                <label for="destination" class="input-label">Search Destination*</label>
                 <input
                   type="text"
                   name="destination"
@@ -183,48 +201,28 @@
                   class="input-field"
                 />
               </div>
-
+            
               <div class="input-wrapper">
                 <label for="people" class="input-label">Pax Number*</label>
-
                 <input
                   type="number"
                   name="people"
                   id="people"
                   required
-                  placeholder="No.of People"
+                  placeholder="No. of People"
                   class="input-field"
                 />
               </div>
-
-              <!-- <div class="input-wrapper">
-                <label for="checkin" class="input-label">Checkin Date**</label>
-
-                <input
-                  type="date"
-                  name="checkin"
-                  id="checkin"
-                  required
-                  class="input-field"
-                />
-              </div>
-
-              <div class="input-wrapper">
-                <label for="checkout" class="input-label">Checkout Date*</label>
-
-                <input
-                  type="date"
-                  name="checkout"
-                  id="checkout"
-                  required
-                  class="input-field"
-                />
-              </div> -->
-
-              <button type="submit" class="btn btn-secondary">
+            
+              <button type="submit" class="btn btn-secondary w-50">
                 Inquire now
               </button>
             </form>
+            
+            <div id="resultsContainer" class="results-container" style="display: none;">
+              <h3>Search Results:</h3>
+              <ul id="resultsList"></ul>
+            </div>
           </div>
         </section>
 

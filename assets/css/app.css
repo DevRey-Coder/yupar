@@ -1195,7 +1195,7 @@
      * TOUR SEARCH
      */
   
-    .tour-search-form { grid-template-columns: repeat(5, 1fr); }
+    .tour-search-form { grid-template-columns: repeat(3, 1fr); }
   
     .tour-search .btn {
       --padding: 15px;

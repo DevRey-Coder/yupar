@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             destinationList.appendChild(destinationCard);
         });
+        
     }
 
     // Initial fetch and render
@@ -147,14 +148,102 @@ document.addEventListener("DOMContentLoaded", async function () {
                         <p class="price">
                             $${pkg.price || "N/A"} <span>/ per person</span>
                         </p>
-                        <a href="./login.html" class="btn btn-secondary">Book now</a>
+                        <button class="btn btn-secondary book-now-btn" data-package-id="${pkg.id}">Book now</button>
                     </div>
                 </div>
             `;
             packageList.appendChild(packageCard);
         });
+
+        // Add event listeners to "Book now" buttons
+    document.querySelectorAll(".book-now-btn").forEach((button) => {
+        button.addEventListener("click", async (event) => {
+            const packageId = event.target.getAttribute("data-package-id");
+            await handleBooking(packageId);
+        });
+    });
     }
 
     // Initial fetch and render
     fetchPackages();
 });
+
+async function handleBooking(packageId) {
+    // Check if accessToken exists in localStorage
+    const accessToken = localStorage.getItem("accessToken");
+    const user = JSON.parse(localStorage.getItem("user")); // Retrieve and parse user object
+
+    if (!accessToken || !user || !user.id) {
+        alert("Please log in to book a package.");
+        window.location.href = "./login.html"; // Redirect to login page if not authenticated
+        return;
+    }
+
+    // Prepare booking data
+    const bookingData = {
+        userId: user.id, // Assuming `id` is the key for userId in the user object
+        packageId: +packageId,
+    };
+
+    try {
+        // Send booking request to the server
+        const response = await fetch("http://localhost:3000/booking", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`, // Include token in header
+            },
+            body: JSON.stringify(bookingData),
+        });
+
+        // Check response status
+        if (response.ok) {
+            alert("Booking successful!");
+        } else {
+            const errorData = await response.json();
+            alert(`Booking failed: ${errorData.message || "Unknown error"}`);
+        }
+    } catch (error) {
+        console.error("Error during booking:", error);
+        alert("An error occurred while booking. Please try again.");
+    }
+}
+
+
+document.getElementById("tourSearchForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    // Get form data
+    const destination = document.getElementById("destination").value;
+    const pax = document.getElementById("people").value;
+
+    try {
+      // Fetch search results from the API
+      const response = await fetch(`http://localhost:3000/package?title=${destination}&pax=${pax}`);
+      const results = await response.json();
+
+      // Display results in the UI
+      const resultsContainer = document.getElementById("resultsContainer");
+      const resultsList = document.getElementById("resultsList");
+      resultsList.innerHTML = ""; // Clear previous results
+
+      if (results.length > 0) {
+        resultsContainer.style.display = "block";
+        results.forEach((result) => {
+          const resultItem = document.createElement("li");
+          resultItem.className = "result-item";
+          resultItem.innerHTML = `
+            <h4>${result.title}</h4>
+            <p>Pax: ${result.pax}</p>
+            <p>Description: ${result.description || "No description available"}</p>
+          `;
+          resultsList.appendChild(resultItem);
+        });
+      } else {
+        resultsContainer.style.display = "block";
+        resultsList.innerHTML = "<li>No results found</li>";
+      }
+    } catch (error) {
+      console.error("Error fetching results:", error);
+    }
+  });
