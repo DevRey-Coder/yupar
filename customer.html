@@ -78,6 +78,47 @@ li .actions button {
     cursor: pointer;
 } */
 
+#sampleTable {
+    width: 100%;
+    margin-top: 1.5rem;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+#sampleTable th, #sampleTable td {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#sampleTable th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+#sampleTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.action-button {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    margin: 0 0.25rem;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    border: none;
+}
+
+.update-button {
+    background-color: #4a90e2;
+}
+
+.delete-button {
+    background-color: #e04a4a;
+}
+
 li .actions .edit-btn {
     background-color: #28a745;
 }
@@ -215,7 +256,7 @@ li .actions .delete-btn {
           </li> -->
           <li>
             <a href="customer.html" class="active">
-              <i class="bi bi-circle"></i><span>Customer List</span>
+              <i class="bi bi-circle"></i><span>Customer Lists</span>
             </a>
           </li>
         </ul>
@@ -223,12 +264,12 @@ li .actions .delete-btn {
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-bar-chart"></i><span>Charts</span><i class="bi bi-chevron-down ms-auto"></i>
+          <i class="bi bi-bar-chart"></i><span>Packages</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="charts-chartjs.html">
-              <i class="bi bi-circle"></i><span>Chart.js</span>
+            <a href="package.html">
+              <i class="bi bi-circle"></i><span>Package Lists</span>
             </a>
           </li>
         </ul>
@@ -285,12 +326,12 @@ li .actions .delete-btn {
               <form action="#" id="destinationForm" method="post">
                 <input type="hidden" id="destinationId" />
             
-                <label for="name">Destination Name</label>
+                <label for="country">Country</label>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Enter Destination Name"
+                  id="country"
+                  name="country"
+                  placeholder="Enter Country"
                   required
                 />
             
@@ -327,10 +368,11 @@ li .actions .delete-btn {
                 <table id="sampleTable">
                     <thead>
                         <tr>
-                            <th>Destination Name</th>
-                            <th>Description</th>
-                            <th>Star Rating</th>
-                            <th>Actions</th>
+                          <th>No</th>
+                          <th>Country</th>
+                          <th>Description</th>
+                          <th>Star Rating</th>
+                          <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -18,10 +18,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to render destinations in the table
     function renderTable() {
         destinationTable.innerHTML = "";
+
+        if (destinations.length === 0) {
+            // Display message when there are no bookings
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td colspan="7" style="text-align: center;">No destinations available</td>
+            `;
+            destinationTable.appendChild(row);
+            return;
+        }
+
         destinations.forEach((destination, index) => {
             const row = document.createElement("tr");
 
             row.innerHTML = `
+                <td>${index+1}</td>
                 <td>${destination.country}</td>
                 <td>${destination.description || "N/A"}</td>
                 <td>${destination.starRating}</td>
@@ -38,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
     destinationForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const name = document.getElementById("name").value;
+        const country = document.getElementById("country").value;
         const description = document.getElementById("description").value;
         const starRating = document.getElementById("starRating").value;
 
@@ -48,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const response = await fetch("http://localhost:3000/destination", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ country: name, description, starRating: parseInt(starRating) })
+                    body: JSON.stringify({ country, description, starRating: parseInt(starRating) })
                 });
                 const newDestination = await response.json();
                 destinations.push(newDestination);
@@ -60,9 +72,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const destinationId = destinations[editingIndex].id;
             try {
                 const response = await fetch(`http://localhost:3000/destination/${destinationId}`, {
-                    method: "PUT",
+                    method: "PATCH",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ country: name, description, starRating: parseInt(starRating) })
+                    body: JSON.stringify({ country, description, starRating: parseInt(starRating) })
                 });
                 destinations[editingIndex] = await response.json();
                 editingIndex = -1;
@@ -80,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.editDestination = function (index) {
         editingIndex = index;
         const destination = destinations[index];
-        document.getElementById("name").value = destination.country;
+        document.getElementById("country").value = destination.country;
         document.getElementById("description").value = destination.description || "";
         document.getElementById("starRating").value = destination.starRating;
     };
