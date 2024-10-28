@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Form</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #4a90e2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .login-container {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 1.5rem;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        margin-bottom: 0.5rem;
+        color: #666;
+      }
+      input {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        font-size: 1rem;
+      }
+      button {
+        background-color: #4a90e2;
+        color: white;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      button:hover {
+        background-color: #3a7bc8;
+      }
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+      }
+      .actions button {
+        width: 48%;
+      }
+      #cancelBtn {
+        background-color: #ccc;
+      }
+      #cancelBtn:hover {
+        background-color: #bbb;
+      }
+      .register-link {
+        text-align: center;
+        margin-top: 1rem;
+        color: #666;
+      }
+      .register-link a {
+        color: #4a90e2;
+        text-decoration: none;
+      }
+      .register-link a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h1>Login</h1>
+      <form id="loginForm">
+        <label for="email">Email</label>
+        <input type="email" id="email" name=email" required placeholder="Enter
+        email">
+
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          placeholder="Enter password"
+        />
+
+        <div class="actions">
+          <button type="submit">Login</button>
+          <button type="button" id="cancelBtn">Cancel</button>
+        </div>
+      </form>
+      <p class="register-link">
+        Don't have an account? <a href="#" id="registerLink">Register</a>
+      </p>
+    </div>
+
+    <script>
+      const loginForm = document.getElementById("loginForm");
+      const cancelBtn = document.getElementById("cancelBtn");
+      const registerLink = document.getElementById("registerLink");
+
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          const response = await fetch("http://localhost:3000/auth/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Login successful:", data); // Output login response to console
+
+            if (data.accessToken) {
+              // Store the accessToken in localStorage
+              localStorage.setItem("accessToken", data.accessToken);
+
+              // Redirect to booking.html
+              window.location.href = "/";
+              console.log(data)
+            }
+          } else {
+            alert("Login failed. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred. Please try again later.");
+        }
+      });
+
+      cancelBtn.addEventListener("click", () => {
+        loginForm.style.opacity = 0;
+        setTimeout(() => {
+          loginForm.style.display = "none";
+        }, 500);
+      });
+
+      registerLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = "/register.html";
+      });
+    </script>
+  </body>
+</html>
