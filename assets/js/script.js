@@ -75,15 +75,41 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     let packages = [];
+    let userBookings = [];
 
-    // Fetch package data from the API and render it
+    // Fetch package data from the API
     async function fetchPackages() {
         try {
             const response = await fetch("http://localhost:3000/package");
             packages = await response.json();
+            await fetchUserBookings();
             renderPackages();
         } catch (error) {
             console.error("Error fetching packages:", error);
+        }
+    }
+
+    // Fetch user's booking data from the API
+    async function fetchUserBookings() {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+            return; // User is not authenticated
+        }
+
+        try {
+            const response = await fetch("http://localhost:3000/booking", {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (response.ok) {
+                userBookings = await response.json();
+            } else {
+                console.error("Error fetching user bookings:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error fetching user bookings:", error);
         }
     }
 
@@ -92,9 +118,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         packageList.innerHTML = "";
 
         if (packages.length === 0) {
-            packageList.innerHTML = `
-                <li style="text-align: center;">No packages available</li>
-            `;
+            packageList.innerHTML = `<li style="text-align: center;">No packages available</li>`;
             return;
         }
 
@@ -107,7 +131,22 @@ document.addEventListener("DOMContentLoaded", async function () {
                 starIcons += `<ion-icon name="${i < starRating ? 'star' : 'star-outline'}"></ion-icon>`;
             }
 
-            // Package card
+            // Check the booking state for this package
+            const booking = userBookings.find((b) => b.packageId === pkg.id);
+            let buttonText = "Book now";
+            let buttonClass = "btn btn-secondary book-now-btn";
+
+            if (booking) {
+                if (booking.bookingState === "PENDING") {
+                    buttonText = "Pending";
+                    buttonClass = "btn btn-warning";
+                } else if (booking.bookingState === "CONFIRMED") {
+                    buttonText = "Booked";
+                    buttonClass = "btn btn-success";
+                }
+            }
+
+            // Create the package card
             const packageCard = document.createElement("li");
             packageCard.innerHTML = `
                 <div class="package-card">
@@ -129,7 +168,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                             <li class="card-meta-item">
                                 <div class="meta-box">
                                     <ion-icon name="people"></ion-icon>
-                                    <p class="text">pax: ${pkg.maxPeople || "N/A"}</p>
+                                    <p class="text">pax: ${pkg.pax || "N/A"}</p>
                                 </div>
                             </li>
                             <li class="card-meta-item">
@@ -142,13 +181,11 @@ document.addEventListener("DOMContentLoaded", async function () {
                     </div>
                     <div class="card-price">
                         <div class="wrapper">
-                            <p class="reviews">(${pkg.reviews || 0} reviews)</p>
+                            <p class="reviews">(${pkg.review || 0} reviews)</p>
                             <div class="card-rating">${starIcons}</div>
                         </div>
-                        <p class="price">
-                            $${pkg.price || "N/A"} <span>/ per person</span>
-                        </p>
-                        <button class="btn btn-secondary book-now-btn" data-package-id="${pkg.id}">Book now</button>
+                        <p class="price">$${pkg.price || "N/A"} <span>/ per person</span></p>
+                        <button class="${buttonClass}" data-package-id="${pkg.id}">${buttonText}</button>
                     </div>
                 </div>
             `;
@@ -156,56 +193,57 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         // Add event listeners to "Book now" buttons
-    document.querySelectorAll(".book-now-btn").forEach((button) => {
-        button.addEventListener("click", async (event) => {
-            const packageId = event.target.getAttribute("data-package-id");
-            await handleBooking(packageId);
+        document.querySelectorAll(".book-now-btn").forEach((button) => {
+            button.addEventListener("click", async (event) => {
+                const packageId = event.target.getAttribute("data-package-id");
+                await handleBooking(packageId);
+            });
         });
-    });
     }
 
     // Initial fetch and render
     fetchPackages();
 });
 
+// Function to handle booking a package
 async function handleBooking(packageId) {
-    // Check if accessToken exists in localStorage
     const accessToken = localStorage.getItem("accessToken");
-    const user = JSON.parse(localStorage.getItem("user")); // Retrieve and parse user object
+    const user = JSON.parse(localStorage.getItem("user"));
 
     if (!accessToken || !user || !user.id) {
-        alert("Please log in to book a package.");
-        window.location.href = "./login.html"; // Redirect to login page if not authenticated
+        showToast("Please log in to book a package.", "error");
+        window.location.href = "./login.html";
         return;
     }
 
-    // Prepare booking data
     const bookingData = {
-        userId: user.id, // Assuming `id` is the key for userId in the user object
+        userId: user.id,
         packageId: +packageId,
     };
 
     try {
-        // Send booking request to the server
         const response = await fetch("http://localhost:3000/booking", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${accessToken}`, // Include token in header
+                Authorization: `Bearer ${accessToken}`,
             },
             body: JSON.stringify(bookingData),
         });
 
-        // Check response status
         if (response.ok) {
-            alert("Booking successful!");
+            showToast("Booking successful!", "success");
+            await fetchPackages(); // Re-fetch packages to update booking state
+        } else if (response.status === 401) {
+            showToast("Unauthorized: Please log in again.", "error");
+            window.location.href = "./login.html";
         } else {
             const errorData = await response.json();
-            alert(`Booking failed: ${errorData.message || "Unknown error"}`);
+            showToast(`Booking failed: ${errorData.message || "Unknown error"}`, "error");
         }
     } catch (error) {
         console.error("Error during booking:", error);
-        alert("An error occurred while booking. Please try again.");
+        showToast("An error occurred while booking. Please try again.", "error");
     }
 }
 
@@ -247,3 +285,21 @@ document.getElementById("tourSearchForm").addEventListener("submit", async funct
       console.error("Error fetching results:", error);
     }
   });
+
+// Toast function
+  function showToast(message, type) {
+    const toast = document.getElementById("custom-toast");
+    toast.textContent = message;
+    toast.className = `custom-toast ${type} show`; // Add type and show class
+
+    // Make the toast visible
+    toast.classList.remove("hidden");
+
+    // Hide the toast after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => {
+            toast.classList.add("hidden");
+        }, 300); // Wait for the fade-out transition
+    }, 3000);
+}

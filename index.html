@@ -26,6 +26,8 @@
       rel="stylesheet"
     />
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+
     <style>
       .results-container {
     margin-top: 20px;
@@ -45,6 +47,59 @@
     margin: 5px 0;
     color: #555;
   }
+  /* Updated styles for the toast container */
+.custom-toast {
+    position: fixed;
+    bottom: 20px; /* Distance from the bottom of the screen */
+    right: 20px;  /* Distance from the right side of the screen */
+    width: 300px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    font-size: 16px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(20px); /* Initial position for sliding animation */
+}
+
+/* Different colors for success and error messages */
+.custom-toast.success {
+    border-left: 5px solid #28a745;
+}
+
+.custom-toast.error {
+    border-left: 5px solid #dc3545;
+}
+
+/* Show the toast */
+.custom-toast.show {
+    opacity: 1;
+    transform: translateY(0); /* Slide into view */
+}
+
+.hidden {
+    display: none;
+}
+
+.btn-pending {
+    background-color: #ffc107;
+    color: white;
+}
+
+.btn-booked {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
     </style>
   </head>
 
@@ -435,6 +490,7 @@
       </div>
     </footer>
 
+    <div id="custom-toast" class="custom-toast hidden"></div>
     <!-- 
     - #GO TO TOP
   -->
@@ -455,6 +511,7 @@
       type="module"
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
     ></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script
       nomodule
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
