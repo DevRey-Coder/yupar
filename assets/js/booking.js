@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${booking.package.location}</td>
                 <td>${booking.package.price * booking.package.pax}</td>
                 <td>
+                    <button class="action-button update-button" onclick="updateBooking(${index})">Confirm</button>
                     <button class="action-button delete-button" onclick="deleteBooking(${index})">Delete</button>
                 </td>
             `;
@@ -59,6 +60,36 @@ document.addEventListener("DOMContentLoaded", function () {
             bookingTable.appendChild(row);
         });
     }
+
+    // Update booking state to "CONFIRMED"
+    window.updateBooking = async function (index) {
+        const bookingId = bookings[index].id;
+        const token = localStorage.getItem('accessToken'); // Authorization token
+
+        try {
+            const response = await fetch(`http://localhost:3000/booking/${bookingId}`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ bookingState: "CONFIRMED" })
+            });
+
+            if (response.ok) {
+                // Update the local booking state and re-render the table
+                bookings[index].bookingState = "CONFIRMED";
+                renderTable();
+                alert("Booking confirmed successfully!");
+            } else {
+                console.error("Failed to update booking:", response.statusText);
+                alert("Failed to confirm the booking. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error updating booking:", error);
+            alert("An error occurred while confirming the booking.");
+        }
+    };
     
     // Delete booking
     window.deleteBooking = async function (index) {
