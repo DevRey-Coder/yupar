@@ -78,7 +78,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 document.addEventListener("DOMContentLoaded", async function () {
   const packageList = document.getElementById("packageList");
   const paymentModal = document.getElementById("paymentModal");
+  const bookingModal = document.getElementById("bookingModal");
   const closeModal = document.querySelector(".close");
+  // const bookingCloseModal = document.querySelector(".bookingClose");
   const paymentForm = document.getElementById("paymentForm");
 
   if (!packageList) {
@@ -86,11 +88,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     return;
   }
 
-  let selectedPackageId = null; // Store selected package ID
+  let selectedPackageId = null;
   let packages = [];
   let userBookings = [];
 
-  // Fetch package data from the API
   async function fetchPackages() {
     try {
       const response = await fetch("http://localhost:3000/package");
@@ -102,22 +103,20 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Fetch user's booking data from the API
   async function fetchUserBookings() {
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
-      return; // User is not authenticated
+      return;
     }
 
     try {
       const response = await fetch("http://localhost:3000/booking", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
 
       if (response.ok) {
         userBookings = await response.json();
+        console.log("User bookings fetched:", userBookings);
       } else {
         console.error("Error fetching user bookings:", response.statusText);
       }
@@ -126,7 +125,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Render packages in the UI
   function renderPackages() {
     packageList.innerHTML = "";
 
@@ -137,8 +135,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     packages.forEach((pkg) => {
       const starRating = pkg.starRating || 0;
-
-      // Generate stars based on the star rating
       let starIcons = "";
       for (let i = 0; i < 5; i++) {
         starIcons += `<ion-icon name="${
@@ -146,7 +142,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         }"></ion-icon>`;
       }
 
-      // Check the booking state for this package
       const booking = userBookings.find((b) => b.packageId === pkg.id);
       let buttonText = "Book now";
       let buttonClass = "btn btn-secondary book-now-btn";
@@ -154,79 +149,140 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (booking) {
         if (booking.bookingState === "PENDING") {
           buttonText = "Pending";
-          buttonClass = "btn btn-warning";
+          buttonClass = "btn btn-warning pending-btn";
         } else if (booking.bookingState === "CONFIRMED") {
           buttonText = "Booked";
-          buttonClass = "btn btn-success";
+          buttonClass = "btn btn-success booked-btn";
         }
       }
 
-      // Create the package card
       const packageCard = document.createElement("li");
       packageCard.innerHTML = `
-                <div class="package-card">
-                    <figure class="card-banner">
-                        <img src="${
-                          pkg.image || "./assets/img/default-package.jpg"
-                        }" 
-                             alt="${pkg.title}" 
-                             loading="lazy" />
-                    </figure>
-                    <div class="card-content">
-                        <h3 class="h3 card-title">${
-                          pkg.title || "Untitled Package"
-                        }</h3>
-                        <p class="card-text">${
-                          pkg.description || "No description available."
-                        }</p>
-                        <ul class="card-meta-list">
-                            <li class="card-meta-item">
-                                <div class="meta-box">
-                                    <ion-icon name="time"></ion-icon>
-                                    <p class="text">${pkg.duration || "N/A"}</p>
-                                </div>
-                            </li>
-                            <li class="card-meta-item">
-                                <div class="meta-box">
-                                    <ion-icon name="people"></ion-icon>
-                                    <p class="text">pax: ${pkg.pax || "N/A"}</p>
-                                </div>
-                            </li>
-                            <li class="card-meta-item">
-                                <div class="meta-box">
-                                    <ion-icon name="location"></ion-icon>
-                                    <p class="text">${
-                                      pkg.location || "Location Unknown"
-                                    }</p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-price">
-                        <div class="wrapper">
-                            <p class="reviews">(${pkg.review || 0} reviews)</p>
-                            <div class="card-rating">${starIcons}</div>
-                        </div>
-                        <p class="price">$${
-                          pkg.price || "N/A"
-                        } <span>/ per person</span></p>
-                        <button class="${buttonClass}" data-package-id="${
+        <div class="package-card">
+          <figure class="card-banner">
+            <img src="${
+              pkg.image || "./assets/img/default-package.jpg"
+            }" alt="${pkg.title}" loading="lazy" />
+          </figure>
+          <div class="card-content">
+            <h3 class="h3 card-title">${pkg.title || "Untitled Package"}</h3>
+            <p class="card-text">${
+              pkg.description || "No description available."
+            }</p>
+            <ul class="card-meta-list">
+              <li class="card-meta-item">
+                <div class="meta-box">
+                  <ion-icon name="time"></ion-icon>
+                  <p class="text">${pkg.duration || "N/A"}</p>
+                </div>
+              </li>
+              <li class="card-meta-item">
+                <div class="meta-box">
+                  <ion-icon name="people"></ion-icon>
+                  <p class="text">pax: ${pkg.pax || "N/A"}</p>
+                </div>
+              </li>
+              <li class="card-meta-item">
+                <div class="meta-box">
+                  <ion-icon name="location"></ion-icon>
+                  <p class="text">${pkg.location || "Location Unknown"}</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="card-price">
+            <div class="wrapper">
+              <p class="reviews">(${pkg.review || 0} reviews)</p>
+              <div class="card-rating">${starIcons}</div>
+            </div>
+            <p class="price">$${
+              pkg.price || "N/A"
+            } <span>/ per person</span></p>
+            <button class="${buttonClass}" data-package-id="${
         pkg.id
       }">${buttonText}</button>
-                    </div>
-                </div>
-            `;
+          </div>
+        </div>
+      `;
       packageList.appendChild(packageCard);
     });
 
-    // Add event listeners to "Book now" buttons
+    attachButtonListeners();
+  }
+
+  function attachButtonListeners() {
     document.querySelectorAll(".book-now-btn").forEach((button) => {
       button.addEventListener("click", (event) => {
         selectedPackageId = event.target.getAttribute("data-package-id");
         openPaymentModal();
       });
     });
+
+    document.querySelectorAll(".pending-btn, .booked-btn").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        const packageId = event.target.getAttribute("data-package-id");
+        showBookingDetails(packageId);
+      });
+    });
   }
+
+  function showBookingDetails(packageId) {
+    const booking = userBookings.find(b => b.packageId === parseInt(packageId));
+    const packageData = packages.find(p => p.id === parseInt(packageId));
+
+    if (booking && packageData) {
+      const totalPrice = packageData.pax * packageData.price;
+      const bookingDetailsContent = `
+        <div class="booking-details">
+          <span class="bookingClose">&times;</span>
+          <h2>Booking Details</h2>
+          <p><strong>Package Title:</strong> ${packageData.title}</p>
+          <p><strong>Location:</strong> ${packageData.location}</p>
+          <p><strong>Pax:</strong> ${packageData.pax}</p>
+          <p><strong>Price:</strong> $${packageData.price}</p>
+          <p><strong>Total Price:</strong> $${totalPrice}</p>
+          <p><strong>Stage:</strong> ${booking.bookingState}</p>
+        </div>
+      `;
+      bookingModal.innerHTML = bookingDetailsContent;
+      bookingModal.style.display = "flex";
+
+      // Adding close functionality
+      document.querySelector(".bookingClose").addEventListener("click", () => {
+        bookingModal.style.display = "none";
+      });
+    }
+}
+
+  // function showBookingDetails(packageId) {
+  //   const booking = userBookings.find(
+  //     (b) => b.packageId === parseInt(packageId)
+  //   );
+  //   if (booking) {
+  //     const bookingDetailsContent = `
+  //       <div class="booking-details">
+  //         <span class="bookingClose">&times;</span>
+  //         <h2>Booking Details</h2>
+  //         <p><strong>Package:</strong> ${
+  //           packages.find((p) => p.id === parseInt(packageId)).title
+  //         }</p>
+  //         <p><strong>State:</strong> ${booking.bookingState}</p>
+  //         <p><strong>Payment Method:</strong> ${booking.paymentMethod}</p>
+  //         <p><strong>Booking Date:</strong> ${new Date(
+  //           booking.createdAt
+  //         ).toLocaleDateString()}</p>
+  //       </div>
+  //     `;
+  //     bookingModal.innerHTML = bookingDetailsContent;
+  //     bookingModal.style.display = "flex";
+
+  //     // After setting innerHTML, select the close button
+  //     const bookingCloseButton = bookingModal.querySelector(".bookingClose");
+  //     bookingCloseButton.addEventListener("click", () => {
+  //       bookingModal.style.display = "none";
+  //     });
+  //   }
+  // }
 
   // Function to handle booking a package
   async function handleBooking(packageId, paymentMethod) {
@@ -282,31 +338,39 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Open the payment method modal
   function openPaymentModal() {
     paymentModal.style.display = "block";
   }
 
-  // Close the payment method modal
   closeModal.addEventListener("click", () => {
     paymentModal.style.display = "none";
   });
 
-  // Handle the payment form submission
+  // // Close the modal when the close button is clicked
+  // if (bookingCloseModal) {
+  //   bookingCloseModal.addEventListener("click", () => {
+  //     bookingModal.style.display = "none";
+  //   });
+  // }
+
+  // Optional: Close modal when clicking outside the modal content
+  window.addEventListener("click", (event) => {
+    if (event.target === bookingModal) {
+      bookingModal.style.display = "none";
+    }
+  });
+
   paymentForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const paymentMethod = document.getElementById("paymentMethod").value;
-
     if (!paymentMethod) {
       alert("Please select a payment method.");
       return;
     }
-
     await handleBooking(selectedPackageId, paymentMethod);
-    paymentModal.style.display = "none"; // Close the modal
+    paymentModal.style.display = "none";
   });
 
-  // Initial fetch and render
   fetchPackages();
 });
 
