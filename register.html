@@ -88,8 +88,8 @@
     <div class="register-container">
         <h1>Register</h1>
         <form id="registerForm">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required placeholder="Enter username">
+            <label for="name">Username</label>
+            <input type="text" id="name" name="name" required placeholder="Enter username">
             
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required placeholder="Enter email">
@@ -115,15 +115,17 @@
 
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+            const name = document.getElementById('name')?.value || '';
+            const email = document.getElementById('email')?.value || '';
+            const password = document.getElementById('password')?.value || '';
+            const confirmPassword = document.getElementById('confirmPassword')?.value || '';
 
             if (password !== confirmPassword) {
                 alert('Passwords do not match. Please try again.');
                 return;
             }
+
+            console.log({name,email,password});
 
             try {
                 const response = await fetch('http://localhost:3000/users/register', {
@@ -131,12 +133,12 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ username, email, password }),
+                    body: JSON.stringify({ name, email, password }),
                 });
 
                 if (response.ok) {
                     alert('Registration successful! Please log in.');
-                    window.location.href = '/';
+                    window.location.href = '/login.html';
                 } else {
                     const errorData = await response.json();
                     alert(`Registration failed: ${errorData.message}`);
@@ -156,7 +158,7 @@
 
         loginLink.addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.href = '/login';
+            window.location.href = '/login.html';
         });
     </script>
 </body>
